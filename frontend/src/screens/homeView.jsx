@@ -1,110 +1,133 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Button, Modal, Form } from "react-bootstrap";
+import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
-import Student from "../components/student";
-import Loading from "../components/loader.jsx";
-import Message from "../components/message.jsx";
-import { listStudents } from "../actions/studentActions";
-import Paginate from "../components/paginate";
+import "react-datepicker/dist/react-datepicker.css";
 import {
-  Row,
-  Col,
-  ButtonGroup,
-  ToggleButton,
-  Container,
-} from "react-bootstrap";
-import StudentsTableView from "./studentTableView";
+  deleteAttendanceByDate,
+  getAnalysisByDate,
+} from "../actions/attendanceActions";
+import AnalysisComponent from "../components/analysisComponent";
+import Loading from "../components/loader";
+import Message from "../components/message";
 
-const HomeView = ({ match, history }) => {
-  const [isGrid, setIsGrid] = useState(true);
-  const keyword = match.params.keyword;
-
-  const pageNumber = match.params.pageNumber || 1;
-  const userLogin = useSelector((state) => state.userLogin);
-  const { loading: userLoading, userInfo } = userLogin;
-
+const AnalysisView = () => {
   const dispatch = useDispatch();
-
-  const studentsList = useSelector((state) => state.studentsList);
-  const { loading, error, students, page, pages } = studentsList;
+  const [modal, setModal] = useState(false);
+  const [days, setDays] = useState(0);
+  const [idList, setIdList] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const attendanceAnalysis = useSelector((state) => state.attendanceAnalysis);
+  const { attendance } = attendanceAnalysis;
+  const attendanceDelete = useSelector((state) => state.attendanceDelete);
+  const {
+    loading: loadingDelete,
+    success: successDelete,
+    error: errorDelete,
+  } = attendanceDelete;
 
   useEffect(() => {
-    if (!userLoading && !userInfo) {
-      history.push("/login");
+    if (attendance) {
+      var temp = [...idList];
+      Object.entries(attendance.details).forEach((at) => {
+        temp.push(at[0]);
+      });
+      setIdList(temp);
+    } else {
+      dispatch(getAnalysisByDate(startDate.toString().substring(0, 15)));
     }
-    dispatch(listStudents(keyword, pageNumber));
-  }, [keyword, pageNumber]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attendance, dispatch]);
+
+  const changeDate = (date) => {
+    dispatch(getAnalysisByDate(date.toString().substring(0, 15)));
+    setStartDate(date);
+  };
+  const showModal = () => {
+    setModal(true);
+  };
+  const closeModal = () => {
+    setModal(false);
+  };
+
+  const startDelete = () => {
+    setModal(false);
+    dispatch(deleteAttendanceByDate(days));
+  };
 
   return (
     <>
-      <div className="hms-page-header">
-        <h1>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px', verticalAlign: 'middle', opacity: 0.7 }}>
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          Students
-        </h1>
-        <div className="hms-view-toggle">
-          <ButtonGroup toggle>
-            {["Grid", "Table"].map((type) => (
-              <ToggleButton
-                key={type}
-                type="radio"
-                variant="secondary"
-                name="radio"
-                value={type}
-                checked={(isGrid ? "Grid" : "Table") === type}
-                onChange={(e) =>
-                  setIsGrid(e.target.value === "Grid" ? true : false)
-                }
-              >
-                {type === "Grid" ? (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
-                    </svg>
-                    Grid
-                  </span>
-                ) : (
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
-                    </svg>
-                    Table
-                  </span>
-                )}
-              </ToggleButton>
-            ))}
-          </ButtonGroup>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+        <Link to="/" className="btn btn-light my-3" style={{ margin: 0 }}>
+          Go Back
+        </Link>
+        <Button variant="outline-danger" size="sm" onClick={showModal} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete Attendance
+        </Button>
+      </div>
+
+      {loadingDelete && <Loading />}
+      {errorDelete && <Message variant="success">{errorDelete}</Message>}
+      {successDelete && <Message variant="success">Attendance Deleted</Message>}
+
+      <div className="hms-card" style={{ marginBottom: '24px' }}>
+        <div className="hms-page-header" style={{ marginBottom: 0 }}>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.7 }}>
+              <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            Analysis
+          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>DATE:</span>
+              <span style={{ fontWeight: 700, color: 'var(--accent)', fontSize: '14px' }}>
+                {startDate.toISOString().toString().substring(0, 10)}
+              </span>
+            </div>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => changeDate(date)}
+            />
+          </div>
         </div>
       </div>
 
-      {loading ? (
-        <Loading />
-      ) : error ? (
-        <Message variant="danger">{error}</Message>
-      ) : isGrid ? (
-        <>
-          <Row className="animate-stagger">
-            {students.map((student) => (
-              <Col key={student._id} sm={12} md={6} lg={4} xl={3}>
-                <Student stuentDetails={student} />
-              </Col>
-            ))}
-          </Row>
-          <Paginate
-            pages={pages}
-            page={page}
-            keyword={keyword ? keyword : ""}
-          />
-        </>
-      ) : (
-        <StudentsTableView keyword={keyword} pageNumber={pageNumber} />
-      )}
+      <Modal show={modal} animation={true} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Attendance Records</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '14px', marginBottom: '16px' }}>
+            Enter the number of days before today to delete attendance records.
+          </p>
+          <Form>
+            <Form.Group controlId="days">
+              <Form.Label>Number of Days</Form.Label>
+              <Form.Control
+                type="number"
+                placeholder="Enter days"
+                value={days}
+                onChange={(e) => setDays(e.target.value)}
+              ></Form.Control>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={startDelete} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {<AnalysisComponent />}
     </>
   );
 };
 
-export default HomeView;
+export default AnalysisView;

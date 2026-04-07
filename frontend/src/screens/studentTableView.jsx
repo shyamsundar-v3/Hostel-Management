@@ -20,11 +20,13 @@ const StudentsTableView = ({ keyword, pageNumber }) => {
 
   const studentsList = useSelector((state) => state.studentsList);
   const { loading, error, students, page, pages } = studentsList;
+
   useEffect(() => {
     if (!students) {
       dispatch(listStudents(keyword, pageNumber));
     }
-  }, [dispatch, keyword, pageNumber]);
+  }, [dispatch, keyword, pageNumber, students]);
+
   return (
     <>
       {loading ? (

@@ -50,6 +50,7 @@ const StudentDetailsView = ({ match, history }) => {
     if (student && student._id && !status) {
       setStatus(student.status);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, match, successUpdate, successDelete]);
 
   const navigateToEdit = () => {
@@ -67,14 +68,6 @@ const StudentDetailsView = ({ match, history }) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
       dispatch(deleteStudent(student._id));
     }
-  };
-
-  const getStatusClass = (s) => {
-    if (!s) return 'status-badge--hostel';
-    const lower = s.toLowerCase();
-    if (lower === 'outside') return 'status-badge--outside';
-    if (lower === 'home') return 'status-badge--home';
-    return 'status-badge--hostel';
   };
 
   return (

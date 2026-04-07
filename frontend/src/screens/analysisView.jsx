@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Row, Col, Button, Modal, Form } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { useDispatch, useSelector } from "react-redux";
 import "react-datepicker/dist/react-datepicker.css";
@@ -26,17 +26,18 @@ const AnalysisView = () => {
     success: successDelete,
     error: errorDelete,
   } = attendanceDelete;
+
   useEffect(() => {
     if (attendance) {
-      var temp = idList;
-      Object.entries(attendance.details).map((at) => {
+      var temp = [...idList];
+      Object.entries(attendance.details).forEach((at) => {
         temp.push(at[0]);
       });
-
       setIdList(temp);
     } else {
       dispatch(getAnalysisByDate(startDate.toString().substring(0, 15)));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attendance, dispatch]);
 
   const changeDate = (date) => {
