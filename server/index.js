@@ -27,6 +27,9 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+
+app.use("/uploads", express.static("uploads"));
+
 // ✅ CORS — allow your Netlify frontend
 app.use(cors({
   origin: process.env.FRONTEND_URL || "https://residential-hostel-management.netlify.app",
