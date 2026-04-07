@@ -9,7 +9,7 @@ import {
   ATTENDANCE_DELETE_SUCCESS,
   ATTENDANCE_DELETE_FAIL,
 } from "../constants/attendanceConstant";
-import axios from "axios";
+import axios from "../axios";
 
 export const postAttendance = (attendance) => async (dispatch, getState) => {
   try {
