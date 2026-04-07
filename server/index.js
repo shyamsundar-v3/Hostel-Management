@@ -1,5 +1,9 @@
-import express from "express";
 import dotenv from "dotenv";
+dotenv.config();
+
+
+
+import express from "express";
 import userRoutes from "./routes/userRoutes.js";
 import studentRoutes from "./routes/studentRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
@@ -14,9 +18,8 @@ import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
 
-// 🔍 Debug (you can remove later)
+
 console.log("ENV CHECK:", process.env.MONGO_URI);
 
 // ✅ Connect DB
