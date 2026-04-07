@@ -29,7 +29,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // ✅ CORS — allow your Netlify frontend
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "https://your-site.netlify.app",
+  origin: process.env.FRONTEND_URL || "https://residential-hostel-management.netlify.app",
   credentials: true,
 }));
 
