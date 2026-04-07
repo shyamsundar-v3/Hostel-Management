@@ -34,9 +34,9 @@ app.use(cors({
 }));
 
 // ✅ Routes — prefixed with /api
-app.use("/api/users", userRoutes);
-app.use("/api/student", studentRoutes);
-app.use("/api/attendance", attendanceRoutes);
+app.use("/users", userRoutes);
+app.use("/student", studentRoutes);
+app.use("/attendance", attendanceRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running....");
