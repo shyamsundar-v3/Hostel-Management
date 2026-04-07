@@ -19,7 +19,7 @@ const AnalysisComponent = () => {
         { label: "Status", key: "attendance" },
       ]);
       var csvMapList = [];
-      Object.entries(attendance.details).map((student) => {
+      Object.entries(attendance.details).forEach((student) => {
         var csvMap = {};
         csvMap["name"] = student[1].name;
         csvMap["contact"] = student[1].contact;
@@ -61,18 +61,16 @@ const AnalysisComponent = () => {
                   </thead>
                   <tbody>
                     {attendance &&
-                      Object.entries(attendance.details).map((student) => {
-                        return (
-                          <tr key={student[0]}>
-                            <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{student[1].name}</td>
-                            <td>
-                              <a href={`tel:${student[1].contact}`}>{student[1].contact}</a>
-                            </td>
-                            <td>{student[1].roomNo}</td>
-                            <td>{getStatusBadge(attendance.data[student[0]])}</td>
-                          </tr>
-                        );
-                      })}
+                      Object.entries(attendance.details).map((student) => (
+                        <tr key={student[0]}>
+                          <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{student[1].name}</td>
+                          <td>
+                            <a href={`tel:${student[1].contact}`}>{student[1].contact}</a>
+                          </td>
+                          <td>{student[1].roomNo}</td>
+                          <td>{getStatusBadge(attendance.data[student[0]])}</td>
+                        </tr>
+                      ))}
                   </tbody>
                 </Table>
               </div>

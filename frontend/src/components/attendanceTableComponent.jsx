@@ -31,7 +31,7 @@ const AttendanceTableComponent = ({
     const roomData = attendance ? attendance.roomNo : roomNo;
     const dataData = attendanceMap;
     const detailsData = attendance ? attendance.details : {};
-    students.map((student) => {
+    students.forEach((student) => {
       detailsData[student._id] = {
         name: student.name,
         contact: student.contact,

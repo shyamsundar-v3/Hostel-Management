@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Loading from "./loader";
 import Message from "./message";
@@ -15,33 +15,33 @@ const AttendanceTable = ({ roomNo }) => {
     loading: loadingAttendance,
     error: errorAttendance,
   } = attendanceDataEnter;
-  useEffect(() => {
-    if (students) {
-      arrangeTable();
-    }
-  }, [dispatch, attendance, attendanceMap, students]);
 
-  const arrangeTable = () => {
+  const arrangeTable = useCallback(() => {
     if (attendance) {
-      var tempMap = attendanceMap;
-      students.map((student) => {
+      var tempMap = { ...attendanceMap };
+      students.forEach((student) => {
         if (attendance.data[student._id]) {
           tempMap[student._id] = attendance.data[student._id];
         } else {
           tempMap[student._id] = "Hostel";
         }
       });
-      setAttendanceMap(attendanceMap);
+      setAttendanceMap(tempMap);
     } else {
-      students.map((student) => {
-        var temp = attendanceMap;
+      var temp = { ...attendanceMap };
+      students.forEach((student) => {
         temp[student._id] = "Hostel";
-        setAttendanceMap(temp);
       });
+      setAttendanceMap(temp);
     }
-    var temp = attendanceMap;
-    setAttendanceMap(temp);
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attendance, students]);
+
+  useEffect(() => {
+    if (students) {
+      arrangeTable();
+    }
+  }, [dispatch, attendance, students, arrangeTable]);
 
   return (
     <>
