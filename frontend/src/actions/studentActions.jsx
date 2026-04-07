@@ -18,7 +18,7 @@ import {
   STUDENT_ROOM_NO_SUCCESS,
   STUDENT_ROOM_NO_ERROR,
 } from "../constants/studentConstant";
-import axios from "axios";
+import axios from "../axios";
 
 export const listStudents = (keyword = "", pageNumber = "") => async (
   dispatch,
